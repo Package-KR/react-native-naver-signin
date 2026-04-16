@@ -1,0 +1,65 @@
+{
+  "name": "@package-kr/react-native-naver-signin",
+  "version": "2.1.0",
+  "description": "React Native Naver Signin",
+  "main": "src/index",
+  "types": "src/index.ts",
+  "scripts": {
+    "build:plugin": "tsc -p plugin/tsconfig.json",
+    "prepublishOnly": "npm run build:plugin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Package-KR/react-native-naver-signin.git"
+  },
+  "files": [
+    "src",
+    "ios",
+    "android",
+    "plugin/build",
+    "app.plugin.js",
+    "*.podspec",
+    "!example",
+    "!android/build",
+    "!ios/build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react-native",
+    "naver",
+    "naver-login",
+    "naver-signin",
+    "naver-sdk",
+    "naver-auth",
+    "login",
+    "signin",
+    "oauth",
+    "social-login",
+    "expo",
+    "expo-plugin",
+    "turbomodule",
+    "new-architecture",
+    "ios",
+    "android"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@expo/config-plugins": "^55.0.8",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.2"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "RNNaverSigninSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "kr.packagekr.naver.signin"
+    }
+  }
+}
