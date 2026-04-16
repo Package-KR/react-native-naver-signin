@@ -1,0 +1,33 @@
+# Example Project
+example/
+
+# Docs
+docs/
+CHANGELOG.md
+NAVER_CONSOLE_SETUP.md
+AGENTS.md
+
+# Build
+android/build/
+ios/build/
+
+# Tests
+__tests__/
+jest.config.js
+
+# Dev
+node_modules/
+vendor/
+script/
+래퍼런스/
+
+# Plugin source (빌드 결과만 배포)
+plugin/src/
+plugin/tsconfig.json
+
+# Config
+tsconfig.json
+.git/
+.github/
+.vscode/
+.idea/
