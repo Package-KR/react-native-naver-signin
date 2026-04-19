@@ -4,7 +4,7 @@ require "json"
 fabric_enabled = ENV["RCT_NEW_ARCH_ENABLED"] == "1"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
-naver_sdk_version = "5.1.0"
+naver_sdk_version = "4.2.3"
 
 Pod::Spec.new do |s|
   s.name         = "naver-signin"
@@ -30,5 +30,5 @@ Pod::Spec.new do |s|
     naver_sdk_version = $NaverSDKVersion
   end
 
-  s.dependency 'naveridlogin-ios-sdk', naver_sdk_version
+  s.dependency 'naveridlogin-sdk-ios', naver_sdk_version
 end
