@@ -28,7 +28,9 @@ class RNNaverSigninModule(
     private fun configureNaverSdk() {
         val clientId = resolveString("naver_client_id") ?: return
         val clientSecret = resolveString("naver_client_secret") ?: return
-        val appName = resolveString("naver_app_name") ?: ""
+        val appName = resolveString("naver_app_name")
+            ?: resolveString("app_name")
+            ?: reactApplicationContext.applicationInfo.loadLabel(reactApplicationContext.packageManager).toString()
         NaverIdLoginSDK.initialize(reactApplicationContext, clientId, clientSecret, appName)
     }
 
