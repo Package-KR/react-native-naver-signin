@@ -6,7 +6,8 @@ import { withIosNaverSignin } from './ios/withIosNaverSignin';
 export interface NaverSigninPluginProps {
   naverClientId: string;
   naverClientSecret: string;
-  naverAppName: string;
+  naverAppName?: string;
+  naverUrlScheme?: string;
   overrideNaverSDKVersion?: string;
 }
 

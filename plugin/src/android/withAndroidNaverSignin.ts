@@ -7,18 +7,21 @@ import {
 import type { NaverSigninPluginProps } from '..';
 
 /**
- * strings.xml에 naver_client_id, naver_client_secret, naver_app_name 추가
+ * strings.xml에 naver_client_id, naver_client_secret 추가
+ * naver_app_name은 지정된 경우에만 추가
  */
 const modifyStringsXml: ConfigPlugin<NaverSigninPluginProps> = (config, props) => {
   return withStringsXml(config, config => {
-    AndroidConfig.Strings.setStringItem(
-      [
-        { $: { name: 'naver_client_id' }, _: props.naverClientId },
-        { $: { name: 'naver_client_secret' }, _: props.naverClientSecret },
-        { $: { name: 'naver_app_name' }, _: props.naverAppName },
-      ],
-      config.modResults,
-    );
+    const stringItems = [
+      { $: { name: 'naver_client_id' }, _: props.naverClientId },
+      { $: { name: 'naver_client_secret' }, _: props.naverClientSecret },
+    ];
+
+    if (props.naverAppName) {
+      stringItems.push({ $: { name: 'naver_app_name' }, _: props.naverAppName });
+    }
+
+    AndroidConfig.Strings.setStringItem(stringItems, config.modResults);
 
     return config;
   });
