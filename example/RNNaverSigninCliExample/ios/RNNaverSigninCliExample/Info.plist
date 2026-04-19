@@ -22,6 +22,35 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- Naver Start -->
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<string>NAVER</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>navery9mhSU9Q9IV04IyLWncw</string>
+		</array>
+	</dict>
+	</array>
+	<key>NAVER_CLIENT_ID</key>
+	<string>y9mhSU9Q9IV04IyLWncw</string>
+	<key>NAVER_CLIENT_SECRET</key>
+	<string>NsNYsWeN3V</string>
+	<key>NAVER_URL_SCHEME</key>
+	<string>navery9mhSU9Q9IV04IyLWncw</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>navery9mhSU9Q9IV04IyLWncw</string>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+		<string>navernidlogin</string>
+		<string>naverroutine</string>
+	</array>
+	<!-- Naver End -->
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
