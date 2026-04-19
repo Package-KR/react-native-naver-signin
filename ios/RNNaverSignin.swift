@@ -20,28 +20,82 @@ class RNNaverSignin: NSObject {
     conn.isNaverAppOauthEnable = true
     conn.isInAppOauthEnable = true
 
-    if let clientId = Bundle.main.object(forInfoDictionaryKey: "NAVER_CLIENT_ID") as? String {
+    let clientId = Bundle.main.object(forInfoDictionaryKey: "NAVER_CLIENT_ID") as? String
+    let configuredScheme = Bundle.main.object(forInfoDictionaryKey: "NAVER_URL_SCHEME") as? String
+
+    if let clientId {
       conn.consumerKey = clientId
-      conn.serviceUrlScheme = "naverlogin\(clientId)"
     }
     if let clientSecret = Bundle.main.object(forInfoDictionaryKey: "NAVER_CLIENT_SECRET") as? String {
       conn.consumerSecret = clientSecret
     }
-    if let appName = Bundle.main.object(forInfoDictionaryKey: "NAVER_APP_NAME") as? String {
+    if let appName = resolveAppName() {
       conn.appName = appName
     }
+    if let scheme = resolveServiceUrlScheme(configuredScheme: configuredScheme, clientId: clientId) {
+      conn.serviceUrlScheme = scheme
+    }
+  }
+
+  private func resolveServiceUrlScheme(configuredScheme: String?, clientId: String?) -> String? {
+    if let configuredScheme,
+       !configuredScheme.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+      return configuredScheme
+    }
+
+    guard let urlTypes = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]] else {
+      return nil
+    }
+
+    let expectedScheme = clientId.map { "naverlogin\($0)" }
+
+    for urlType in urlTypes {
+      guard let schemes = urlType["CFBundleURLSchemes"] as? [String] else {
+        continue
+      }
+
+      if let urlName = urlType["CFBundleURLName"] as? String,
+         urlName.caseInsensitiveCompare("NAVER") == .orderedSame,
+         let namedScheme = schemes.first {
+        return namedScheme
+      }
+
+      if let expectedScheme, let matchingScheme = schemes.first(where: { $0 == expectedScheme }) {
+        return matchingScheme
+      }
+
+      if let fallbackScheme = schemes.first(where: { $0.hasPrefix("naver") }) {
+        return fallbackScheme
+      }
+    }
+
+    return nil
+  }
+
+  private func resolveAppName() -> String? {
+    let infoDictionaryKeys = ["NAVER_APP_NAME", "CFBundleDisplayName", "CFBundleName"]
+
+    for key in infoDictionaryKeys {
+      if let value = Bundle.main.object(forInfoDictionaryKey: key) as? String,
+         !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        return value
+      }
+    }
+
+    return nil
   }
 
   // 네이버 로그인 URL 처리
   @objc(handleOpenUrl:)
   static func handleOpenUrl(_ url: URL) -> Bool {
-    return NaverThirdPartyLoginConnection.getSharedInstance()?.receiveAccessToken(url) ?? false
+    let result = NaverThirdPartyLoginConnection.getSharedInstance()?.receiveAccessToken(url)
+    return result?.rawValue == 0
   }
 
   // 로그인
-  @objc(login:rejecter:)
+  @objc(login:reject:)
   func login(_ resolve: @escaping RCTPromiseResolveBlock,
-             rejecter reject: @escaping RCTPromiseRejectBlock) {
+             reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
       self.pendingResolve = resolve
       self.pendingReject = reject
@@ -52,17 +106,17 @@ class RNNaverSignin: NSObject {
   }
 
   // 로그아웃
-  @objc(logout:rejecter:)
+  @objc(logout:reject:)
   func logout(_ resolve: @escaping RCTPromiseResolveBlock,
-              rejecter reject: @escaping RCTPromiseRejectBlock) {
+              reject: @escaping RCTPromiseRejectBlock) {
     NaverThirdPartyLoginConnection.getSharedInstance()?.resetToken()
     resolve("Successfully logged out")
   }
 
   // 회원탈퇴
-  @objc(deleteAccount:rejecter:)
+  @objc(deleteAccount:reject:)
   func deleteAccount(_ resolve: @escaping RCTPromiseResolveBlock,
-                     rejecter reject: @escaping RCTPromiseRejectBlock) {
+                     reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
       self.pendingResolve = resolve
       self.pendingReject = reject
@@ -73,9 +127,9 @@ class RNNaverSignin: NSObject {
   }
 
   // 프로필 조회
-  @objc(getProfile:rejecter:)
+  @objc(getProfile:reject:)
   func getProfile(_ resolve: @escaping RCTPromiseResolveBlock,
-                  rejecter reject: @escaping RCTPromiseRejectBlock) {
+                  reject: @escaping RCTPromiseRejectBlock) {
     guard let accessToken = NaverThirdPartyLoginConnection.getSharedInstance()?.accessToken else {
       reject("E_NOT_LOGGED_IN", "Not logged in", nil)
       return
