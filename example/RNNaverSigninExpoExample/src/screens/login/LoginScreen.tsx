@@ -5,10 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   deleteAccount,
   getAgreement,
-  login,
-  logout,
   getProfile,
   isNaverSigninError,
+  login,
+  logout,
 } from '@package-kr/react-native-naver-signin';
 import type {
   NaverAgreement,
@@ -53,10 +53,7 @@ const RESPONSE_LABELS = {
 
 type ResponseType = keyof typeof RESPONSE_LABELS;
 
-function sortedStringify(
-  data: unknown,
-  keyOrder: readonly string[] = [],
-): string {
+function sortedStringify(data: unknown, keyOrder: readonly string[] = []): string {
   if (typeof data !== 'object' || data == null || Array.isArray(data)) {
     return JSON.stringify(data, null, 2);
   }
@@ -84,8 +81,9 @@ function createErrorBody(error: unknown): Record<string, unknown> {
   const sdkMessage = (
     error as { sdkMessage?: unknown; userInfo?: { sdkMessage?: unknown } }
   ).sdkMessage;
-  const userInfoSdkMessage = (error as { userInfo?: { sdkMessage?: unknown } })
-    .userInfo?.sdkMessage;
+  const userInfoSdkMessage = (
+    error as { userInfo?: { sdkMessage?: unknown } }
+  ).userInfo?.sdkMessage;
 
   if (isNaverSigninError(error)) {
     body.code = error.code;
@@ -117,7 +115,8 @@ function agreementErrorStringify(error: unknown): string {
     body.code === 'NAVER_AGREEMENT_FAILED' &&
     sdkMessage.includes('HTTP 404')
   ) {
-    body.message = '현재 앱에서 네이버 동의 항목 API를 사용할 수 없습니다.';
+    body.message =
+      '현재 앱에서 네이버 동의 항목 API를 사용할 수 없습니다.';
     body.hint =
       '네이버 개발자 센터에서 약관 동의 대행 기능을 설정한 앱에서만 조회할 수 있습니다.';
   }

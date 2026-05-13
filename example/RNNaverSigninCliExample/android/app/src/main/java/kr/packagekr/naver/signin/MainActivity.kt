@@ -1,4 +1,4 @@
-package com.rnnaversignincliexample
+package kr.packagekr.naver.signin
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

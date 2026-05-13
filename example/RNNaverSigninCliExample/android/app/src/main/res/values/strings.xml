@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RNNaverSigninCliExample</string>
+    <string name="naver_client_id">y9mhSU9Q9IV04IyLWncw</string>
+    <string name="naver_client_secret">LJplndYiai</string>
 </resources>

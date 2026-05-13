@@ -1,4 +1,4 @@
-import { StyleSheet, type ViewStyle, type TextStyle } from 'react-native';
+import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
 
 const baseButtonStyle: ViewStyle = {
   height: 56,
@@ -22,8 +22,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-
-  // 상단 헤더
   header: {
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -36,8 +34,6 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333333',
   },
-
-  // 가운데 response
   responseBox: {
     flex: 1,
     padding: 16,
@@ -54,8 +50,6 @@ export const styles = StyleSheet.create({
     fontFamily: 'monospace',
     lineHeight: 18,
   },
-
-  // 하단 버튼
   buttons: {
     paddingHorizontal: 20,
     paddingBottom: 20,

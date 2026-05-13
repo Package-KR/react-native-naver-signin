@@ -9,9 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "kr.packagekr.naver.signin",
       "supportsTablet": true
     },
     "android": {
+      "package": "kr.packagekr.naver.signin",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -27,6 +29,14 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "@package-kr/react-native-naver-signin",
+        {
+          "naverClientId": "y9mhSU9Q9IV04IyLWncw",
+          "naverClientSecret": "LJplndYiai",
+          "naverUrlScheme": "navery9mhSU9Q9IV04IyLWncw"
+        }
+      ],
       [
         "expo-splash-screen",
         {
