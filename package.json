@@ -6,7 +6,6 @@
   "types": "src/index.ts",
   "scripts": {
     "build:plugin": "tsc -p plugin/tsconfig.json",
-    "prepare": "npm run build:plugin",
     "prepublishOnly": "npm run build:plugin"
   },
   "repository": {
@@ -51,10 +50,8 @@
     "android"
   ],
   "license": "MIT",
-  "dependencies": {
-    "@expo/config-plugins": "^55.0.8"
-  },
   "devDependencies": {
+    "@expo/config-plugins": "^55.0.8",
     "@types/node": "^25.6.0",
     "typescript": "^6.0.3"
   },

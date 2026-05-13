@@ -3,11 +3,9 @@ name: CI
 on:
   push:
     branches:
-      - dev
       - main
   pull_request:
     branches:
-      - dev
       - main
   workflow_dispatch:
 
@@ -103,7 +101,7 @@ jobs:
         working-directory: example/RNNaverSigninExpoExample
         run: |
           /usr/bin/grep -q 'NAVER_CLIENT_ID' ios/RNNaverSigninExpoExample/Info.plist
-          /usr/bin/grep -q 'receiveAccessToken' ios/RNNaverSigninExpoExample/AppDelegate.swift
+          /usr/bin/grep -q 'RNNaverSignin.handleOpen' ios/RNNaverSigninExpoExample/AppDelegate.swift
 
   ios:
     name: iOS
