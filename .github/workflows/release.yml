@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    # 릴리스 커밋이 다시 워크플로우를 트리거하지 않도록 방지합니다.
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+
+    steps:
+      # 릴리스 계산과 태그 생성을 위해 전체 git 히스토리를 가져옵니다.
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # npm publish와 package-lock 처리에 필요한 Node 환경을 맞춥니다.
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # package-lock 기준으로 의존성을 고정 설치합니다.
+      - name: Install dependencies
+        run: npm ci
+
+      # 릴리스 커밋 작성자를 GitHub Actions 봇 계정으로 고정합니다.
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # 마지막 태그 이후 커밋 메시지를 읽어 major/minor/patch 여부를 계산합니다.
+      - name: Determine release type
+        id: release_type
+        run: |
+          last_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+
+          if [ -n "$last_tag" ]; then
+            commits="$(git log --format=%s%n%b "$last_tag"..HEAD)"
+          else
+            commits="$(git log --format=%s%n%b)"
+          fi
+
+          release_type=""
+
+          if printf '%s\n' "$commits" | /usr/bin/grep -Eq 'BREAKING CHANGE:|^[a-z]+(\([^)]+\))?!:'; then
+            release_type="major"
+          elif printf '%s\n' "$commits" | /usr/bin/grep -Eq '^feat(\([^)]+\))?:'; then
+            release_type="minor"
+          elif printf '%s\n' "$commits" | /usr/bin/grep -Eq '^(fix|perf)(\([^)]+\))?:'; then
+            release_type="patch"
+          fi
+
+          echo "release_type=$release_type" >> "$GITHUB_OUTPUT"
+
+      # 배포 대상 커밋이 없으면 릴리스 없이 워크플로우를 종료합니다.
+      - name: Stop when no release is needed
+        if: ${{ steps.release_type.outputs.release_type == '' }}
+        run: echo "No releasable commits found."
+
+      # 계산된 타입에 맞춰 버전을 올리고, publish 가능한 패키지인지 먼저 확인합니다.
+      - name: Bump version
+        if: ${{ steps.release_type.outputs.release_type != '' }}
+        id: version
+        run: |
+          npm version "${{ steps.release_type.outputs.release_type }}" --no-git-tag-version
+          version="v$(node -p "require('./package.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          git add package.json package-lock.json
+          git commit -m "chore(release): ${version} [skip ci]"
+
+      - name: Pack package
+        if: ${{ steps.release_type.outputs.release_type != '' }}
+        run: npm pack --dry-run
+
+      # Trusted Publishing을 이용해 npm 레지스트리에 먼저 배포합니다.
+      - name: Publish to npm
+        if: ${{ steps.release_type.outputs.release_type != '' }}
+        run: npm publish --access public --provenance
+
+      # npm publish 성공 후에만 태그와 GitHub 릴리스를 공개합니다.
+      - name: Push release commit and tag
+        if: ${{ steps.release_type.outputs.release_type != '' }}
+        run: |
+          git tag -a "${{ steps.version.outputs.version }}" -m "Release ${{ steps.version.outputs.version }}"
+          git push origin HEAD:main --follow-tags
+
+      # GitHub Releases 화면에 자동 생성 노트를 포함한 릴리스를 만듭니다.
+      - name: Create GitHub release
+        if: ${{ steps.release_type.outputs.release_type != '' }}
+        run: gh release create "${{ steps.version.outputs.version }}" --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

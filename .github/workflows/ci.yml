@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+jobs:
+  js:
+    name: JS
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build plugin
+        run: npm run build:plugin
+
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install example dependencies
+        working-directory: example/RNNaverSigninCliExample
+        run: npm ci
+
+      - name: Compile Kotlin
+        working-directory: example/RNNaverSigninCliExample/android
+        run: ./gradlew :package-kr_react-native-naver-signin:compileDebugKotlin
+
+  expo:
+    name: Expo Plugin
+    runs-on: macos-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Build plugin
+        run: npm run build:plugin
+
+      - name: Install example dependencies
+        working-directory: example/RNNaverSigninExpoExample
+        run: npm ci
+
+      - name: Type check Expo example
+        working-directory: example/RNNaverSigninExpoExample
+        run: npx tsc --noEmit
+
+      - name: Resolve Expo config
+        working-directory: example/RNNaverSigninExpoExample
+        run: npx expo config --json > /tmp/naver-expo-config.json
+
+      - name: Prebuild iOS project
+        working-directory: example/RNNaverSigninExpoExample
+        run: npx expo prebuild --platform ios --no-install --clean
+
+      - name: Verify iOS plugin output
+        working-directory: example/RNNaverSigninExpoExample
+        run: |
+          /usr/bin/grep -q 'NAVER_CLIENT_ID' ios/RNNaverSigninExpoExample/Info.plist
+          /usr/bin/grep -q 'receiveAccessToken' ios/RNNaverSigninExpoExample/AppDelegate.swift
+
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Install example dependencies
+        working-directory: example/RNNaverSigninCliExample
+        run: npm ci
+
+      - name: Install pods
+        working-directory: example/RNNaverSigninCliExample/ios
+        run: pod update React-Core-prebuilt ReactNativeDependencies hermes-engine --no-repo-update
+
+      - name: Build iOS
+        working-directory: example/RNNaverSigninCliExample/ios
+        run: xcodebuild -workspace RNNaverSigninCliExample.xcworkspace -scheme RNNaverSigninCliExample -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO

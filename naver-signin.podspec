@@ -8,6 +8,7 @@ naver_sdk_version = "4.2.3"
 
 Pod::Spec.new do |s|
   s.name         = "naver-signin"
+  s.module_name  = "RNNaverSignin"
   s.version      = package["version"]
   s.summary      = package["description"]
   s.homepage     = "https://github.com/Package-KR/react-native-naver-signin"
@@ -15,7 +16,7 @@ Pod::Spec.new do |s|
   s.authors      = { "Package.kr" => "" }
   s.platforms    = { :ios => "13.0" }
   s.framework    = 'UIKit'
-  s.source       = { :git => "https://github.com/Package-KR/react-native-naver-signin.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/Package-KR/react-native-naver-signin.git", :tag => "v#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.requires_arc = true
