@@ -1,6 +1,6 @@
 {
   "name": "@package-kr/react-native-naver-signin",
-  "version": "2.1.0",
+  "version": "1.0.0",
   "description": "React Native Naver Signin",
   "main": "src/index",
   "types": "src/index.ts",
