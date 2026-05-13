@@ -6,6 +6,25 @@ import {
 } from '@expo/config-plugins';
 import type { NaverSigninPluginProps } from '..';
 
+const NAVER_SDK_VERSION_MARKER_START = '// @package-kr/react-native-naver-signin naverSdkVersion start';
+const NAVER_SDK_VERSION_MARKER_END = '// @package-kr/react-native-naver-signin naverSdkVersion end';
+const NAVER_SDK_VERSION_REGEX =
+  /\s*\/\/ @package-kr\/react-native-naver-signin naverSdkVersion start\r?\n\s*naverSdkVersion\s*=\s*["'][^"']*["']\r?\n\s*\/\/ @package-kr\/react-native-naver-signin naverSdkVersion end\r?\n?/m;
+const LEGACY_NAVER_SDK_VERSION_REGEX = /\n?\s*naverSdkVersion\s*=\s*["'][^"']*["']\r?\n?/g;
+
+// buildscript.ext 블록에 Naver SDK 버전 변수 삽입
+const insertNaverSdkVersionIntoBuildscript = (contents: string, extProperty: string): string => {
+  if (!/buildscript\s*\{/.test(contents)) {
+    return `buildscript {\n    ext {\n        ${extProperty}\n    }\n}\n\n${contents}`;
+  }
+
+  if (!/buildscript\s*\{[\s\S]*?ext\s*\{/.test(contents)) {
+    return contents.replace(/buildscript\s*\{/, match => `${match}\n    ext {\n        ${extProperty}\n    }`);
+  }
+
+  return contents.replace(/(buildscript\s*\{[\s\S]*?ext\s*\{)/, `$1\n        ${extProperty}`);
+};
+
 /**
  * strings.xml에 naver_client_id, naver_client_secret 추가
  * naver_app_name은 지정된 경우에만 추가
@@ -29,39 +48,32 @@ const modifyStringsXml: ConfigPlugin<NaverSigninPluginProps> = (config, props) =
 
 /**
  * build.gradle에 naverSdkVersion ext 속성 주입
- * overrideNaverSDKVersion이 지정된 경우에만 동작
+ * Android SDK override가 지정된 경우에만 동작
  */
 const modifyProjectBuildGradle: ConfigPlugin<NaverSigninPluginProps> = (config, props) => {
-  if (!props.overrideNaverSDKVersion) return config;
-
   return withProjectBuildGradle(config, config => {
     const contents = config.modResults.contents;
-    const extProperty = `naverSdkVersion = "${props.overrideNaverSDKVersion}"`;
+    const overrideVersion = props.overrideNaverAndroidSDKVersion ?? props.overrideNaverSDKVersion;
+    const cleanedContents = overrideVersion
+      ? contents.replace(NAVER_SDK_VERSION_REGEX, '').replace(LEGACY_NAVER_SDK_VERSION_REGEX, '\n')
+      : contents.replace(NAVER_SDK_VERSION_REGEX, '');
 
-    // 이미 naverSdkVersion이 선언되어 있으면 교체
-    if (contents.includes('naverSdkVersion')) {
-      config.modResults.contents = contents.replace(/naverSdkVersion\s*=\s*"[^"]*"/, extProperty);
+    if (!overrideVersion) {
+      config.modResults.contents = cleanedContents;
       return config;
     }
 
-    // ext 블록이 있으면 그 안에 추가
-    if (contents.includes('ext {')) {
-      config.modResults.contents = contents.replace(/ext\s*{/, `ext {\n        ${extProperty}`);
-    } else {
-      // ext 블록이 없으면 새로 생성
-      config.modResults.contents = contents.replace(
-        /buildscript\s*{/,
-        `buildscript {\n    ext {\n        ${extProperty}\n    }`,
-      );
-    }
+    const extProperty = [
+      NAVER_SDK_VERSION_MARKER_START,
+      `naverSdkVersion = "${overrideVersion}"`,
+      NAVER_SDK_VERSION_MARKER_END,
+    ].join('\n');
 
+    config.modResults.contents = insertNaverSdkVersionIntoBuildscript(cleanedContents, extProperty);
     return config;
   });
 };
 
 export const withAndroidNaverSignin: ConfigPlugin<NaverSigninPluginProps> = (config, props) => {
-  config = modifyStringsXml(config, props);
-  config = modifyProjectBuildGradle(config, props);
-
-  return config;
+  return [modifyStringsXml, modifyProjectBuildGradle].reduce((nextConfig, plugin) => plugin(nextConfig, props), config);
 };
