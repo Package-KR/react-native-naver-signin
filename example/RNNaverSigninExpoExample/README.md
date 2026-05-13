@@ -1,50 +1,48 @@
-# Welcome to your Expo app 👋
+# RNNaverSigninExpoExample
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo prebuild 환경에서 `@package-kr/react-native-naver-signin` config plugin과 API 동작을 확인하는 예제입니다.
 
-## Get started
+## 실행
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### iOS
 
-## Learn more
+```sh
+npm run ios
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Android
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```sh
+npm run android
+```
 
-## Join the community
+## 예제 설정
 
-Join our community of developers creating universal apps.
+이 예제는 아래 네이버 개발자 센터 설정으로 맞춰져 있습니다.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+| 항목 | 값 |
+| --- | --- |
+| iOS Bundle ID | `kr.packagekr.naver.signin` |
+| Android Package Name | `kr.packagekr.naver.signin` |
+| iOS URL Scheme | `navery9mhSU9Q9IV04IyLWncw` |
+
+config plugin 설정은 `app.json`의 `plugins` 항목에 있습니다.
+
+```json
+[
+  "@package-kr/react-native-naver-signin",
+  {
+    "naverClientId": "y9mhSU9Q9IV04IyLWncw",
+    "naverClientSecret": "LJplndYiai",
+    "naverUrlScheme": "navery9mhSU9Q9IV04IyLWncw"
+  }
+]
+```
+
+Expo Go에서는 네이티브 모듈을 사용할 수 없으므로 `npm run ios` 또는 `npm run android`로 development build를 실행합니다.
+
+다른 네이버 앱으로 검증할 경우 `app.json`의 Client ID, Client Secret, URL Scheme과 네이버 개발자 센터 등록값을 같이 변경합니다.
