@@ -11,18 +11,17 @@ apply plugin: "com.facebook.react"
 // TurboModule 코드젠 설정
 react {
     jsRootDir = file("../src")
-    libraryName = "RNNaverSigninSpec"
     codegenJavaPackageName = "kr.packagekr.naver.signin"
 }
 
 // Android 빌드 설정
 android {
     namespace "kr.packagekr.naver.signin"
-    compileSdkVersion getExtOrDefault("compileSdkVersion", 36)
+    compileSdkVersion getExtOrDefault("compileSdkVersion", 35)
 
     defaultConfig {
-        minSdkVersion getExtOrDefault("minSdkVersion", 24)
-        targetSdkVersion getExtOrDefault("targetSdkVersion", 36)
+        minSdkVersion getExtOrDefault("minSdkVersion", 21)
+        targetSdkVersion getExtOrDefault("targetSdkVersion", 35)
     }
 
     compileOptions {
@@ -45,7 +44,7 @@ repositories {
 dependencies {
     def naverVersion = getExtOrDefault("naverSdkVersion", "5.10.0")
 
-    implementation "com.facebook.react:react-native:+"
+    implementation "com.facebook.react:react-android"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${getExtOrDefault("kotlinVersion", "2.1.20")}"
 
     implementation "com.navercorp.nid:oauth:${naverVersion}"
