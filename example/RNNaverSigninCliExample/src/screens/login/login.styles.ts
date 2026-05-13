@@ -42,6 +42,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  responseLabel: {
+    marginBottom: 8,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#111111',
+  },
   responseText: {
     fontSize: 12,
     color: '#333333',
@@ -55,8 +61,22 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
     gap: 10,
   },
-  buttonContainer: {
-    width: '100%',
+  apiButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  apiButton: {
+    ...baseButtonStyle,
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  apiButtonText: {
+    fontSize: 13,
+    fontWeight: '500',
+    textAlign: 'center',
+    color: '#333333',
   },
   naverButton: {
     ...baseButtonStyle,
@@ -65,16 +85,6 @@ export const styles = StyleSheet.create({
   naverButtonText: {
     ...baseTextStyle,
     color: '#ffffff',
-  },
-  profileButton: {
-    ...baseButtonStyle,
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  profileButtonText: {
-    ...baseTextStyle,
-    color: '#333333',
   },
   logoutButton: {
     ...baseButtonStyle,

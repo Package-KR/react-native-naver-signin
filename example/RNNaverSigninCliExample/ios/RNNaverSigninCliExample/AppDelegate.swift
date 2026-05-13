@@ -3,6 +3,8 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
+import RNNaverSignin
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
@@ -30,6 +32,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     )
 
     return true
+  }
+
+  // AppDelegate 클래스 안에 메서드 추가 또는 기존 메서드 앞부분에 네이버 처리 추가
+  func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    if RNNaverSignin.handleOpen(url) {
+      return true
+    }
+
+    return RCTLinkingManager.application(app, open: url, options: options)
   }
 }
 

@@ -1,4 +1,4 @@
-package com.rnnaversignincliexample
+package kr.packagekr.naver.signin
 
 import android.app.Application
 import com.facebook.react.PackageList
