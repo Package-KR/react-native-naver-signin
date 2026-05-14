@@ -6,20 +6,21 @@
 [![npm downloads](https://img.shields.io/npm/dm/@package-kr/react-native-naver-signin)](https://www.npmjs.com/package/@package-kr/react-native-naver-signin)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 
-![iOS](https://img.shields.io/badge/iOS-13%2B-black?logo=apple&logoColor=white&labelColor=000000)
 ![Android](https://img.shields.io/badge/Android-API%2021%2B-3DDC84?logo=android&logoColor=white&labelColor=3DDC84)
+![iOS](https://img.shields.io/badge/iOS-13%2B-black?logo=apple&logoColor=white&labelColor=000000)
 
 React Native 전용 네이버 로그인 라이브러리 입니다.
 
 <p align="center">
-  <img src="./docs/images/ios-preview1.png" width="45%" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="./docs/images/ios-preview2.png" width="45%" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <br/>
-  <img src="./docs/images/android-preview1.png" width="45%" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="./docs/images/android-preview2.png" width="45%" />
+  <img src="./docs/images/android-preview1.png" width="39%" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="./docs/images/android-preview2.png" width="39%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/ios-preview1.png" width="44%" />
+  &nbsp;
+  <img src="./docs/images/ios-preview2.png" width="44%" />
 </p>
 
 </div>
@@ -43,6 +44,21 @@ npm install @package-kr/react-native-naver-signin
 ```
 
 ## React Native CLI
+
+### Android
+
+#### 1. 네이버 클라이언트 정보 설정
+
+`app/src/main/res/values/strings.xml`에 네이버 클라이언트 정보를 추가합니다.
+앱 이름은 기본적으로 기존 `app_name` 값을 사용하므로 별도 `naver_app_name`은 선택사항입니다.
+
+```diff
+  <resources>
+      <string name="app_name">YourAppName</string>
++     <string name="naver_client_id">{NAVER_CLIENT_ID}</string>
++     <string name="naver_client_secret">{NAVER_CLIENT_SECRET}</string>
+  </resources>
+```
 
 ### iOS
 
@@ -139,21 +155,6 @@ func application(
 
 ```sh
 cd ios && pod install
-```
-
-### Android
-
-#### 1. 네이버 클라이언트 정보 설정
-
-`app/src/main/res/values/strings.xml`에 네이버 클라이언트 정보를 추가합니다.
-앱 이름은 기본적으로 기존 `app_name` 값을 사용하므로 별도 `naver_app_name`은 선택사항입니다.
-
-```diff
-  <resources>
-      <string name="app_name">YourAppName</string>
-+     <string name="naver_client_id">{NAVER_CLIENT_ID}</string>
-+     <string name="naver_client_secret">{NAVER_CLIENT_SECRET}</string>
-  </resources>
 ```
 
 ## Expo
